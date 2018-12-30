@@ -41,6 +41,33 @@ Public Class frmRobotController
     Public TempandHum As String
     Public angle As Double
     Public angle2 As Double
+    Public direction As Integer
+    Sub StopWheels()
+        wbOnScreen.Navigate("http://" & CurrentIP & "/cgi-bin/robot_code/robot.py?Channel1=AE&Speed1=0") 'stop robot
+    End Sub
+
+
+    Sub Turn()
+        'create sub  Turn to later shorten code
+        If TurnWheels = True Then
+            btnTurn.Text = "Straight Wheels"
+            btnLeft.Enabled = True
+            btnRight.Enabled = True
+            btnForward.Enabled = False
+            btnBackward.Enabled = False
+            TurnWheels = False
+            wbTurnWheels.Navigate("http://" & CurrentIP & "/cgi-bin/robot_code/robot.py?Channel1=BG&Speed1=2400&Channel2=CF&Speed2=3700")
+        ElseIf TurnWheels = False Then
+            btnTurn.Text = "Turn Wheels"
+            btnLeft.Enabled = False
+            btnRight.Enabled = False
+            btnForward.Enabled = True
+            btnBackward.Enabled = True
+            TurnWheels = True
+            wbTurnWheels.Navigate("http://" & CurrentIP & "/cgi-bin/robot_code/robot.py?Channel1=BCFG&Speed1=3050")
+        End If
+
+    End Sub
     Private Sub btnClose_Click(sender As Object, e As EventArgs) Handles btnClose.Click
         Me.Close()
     End Sub
@@ -79,15 +106,16 @@ Public Class frmRobotController
     End Sub
 
     Private Sub tmrJoystick_Tick(sender As Object, e As EventArgs) Handles tmrJoystick.Tick
+        Dim WheelAngle As Integer
         ' Get the joystick information
         ' Program from https://social.msdn.microsoft.com/Forums/vstudio/en-US/af28b35b-d756-4d87-94c6-ced882ab20a5/reading-input-data-from-joystick-in-visual-basic?forum=vbgeneral Modified by Christiaan Bauman
         Call joyGetPosEx(0, myjoyEX)
 
         With myjoyEX
-            LeftX = (.dwXpos - 32767.5) / 1635 'convert raw values to more easy useable values
-            LeftY = (.dwYpos - 32767.5) / 1635
-            RightX = (.dwZpos - 32767.5) / 1635
-            rightY = (.dwRpos - 32767.5) / 1635
+            LeftX = (.dwXpos - 32767.5) / 655.35 'convert raw values to more easy useable values
+            LeftY = (.dwYpos - 32767.5) / -655.35
+            RightX = (.dwZpos - 32767.5) / 655.35
+            rightY = (.dwRpos - 32767.5) / -655.35
             Dpad = .dwPOV / 100
             btnID = .dwButtons
             btnAmount = .dwButtonNumber
@@ -99,39 +127,91 @@ Public Class frmRobotController
             lblButtonType.Text = "Button ID:  " + btnID.ToString
             lblButtonAmount.Text = "Button amount:  " + btnAmount.ToString
             lblDpad.Text = "POV:  " + Dpad.ToString
+            If LeftY > 0 Then
+                direction = Math.Atan(LeftX / LeftY) * (180 / Math.PI)
+                lblDirection.Text = direction
+            End If
+            If (LeftY < 0) And (LeftX < 0) Then
+                direction = (Math.Atan(LeftX / LeftY) * (180 / Math.PI)) - 180
+                lblDirection.Text = direction
+            End If
+            If (LeftY < 0) And (LeftX > 0) Then
+                direction = (Math.Atan(LeftX / LeftY) * (180 / Math.PI)) + 180
+                lblDirection.Text = direction
+            End If
+            If (LeftY = 0) And (LeftX < 0) Then
+                direction = -90
+                lblDirection.Text = direction
+            End If
+            If (LeftY = 0) And (LeftX > 0) Then
+                direction = 90
+                lblDirection.Text = direction
+            End If
+            If (LeftY < 0) And (LeftX = 0) Then
+                direction = 180
+                lblDirection.Text = direction
+            End If
+            If (LeftY > 0) And (LeftX = 0) Then
+                direction = 0
+                lblDirection.Text = direction
+            End If
+
+            WheelAngle = (direction / 90) * 45
+            lblWheelAngle.Text = WheelAngle
+
         End With
 
     End Sub
 
     Private Sub btnForward_MouseDown(sender As Object, e As MouseEventArgs) Handles btnForward.MouseDown
-        wbOnScreen.Navigate("http://" & CurrentIP & "/cgi-bin/robot_code/robot.py?Channel1=A&Speed1=2000?Channel2=E&Speed2=4000") 'drive forward
+        wbOnScreen.Navigate("http://" & CurrentIP & "/cgi-bin/robot_code/robot.py?Channel1=A&Speed1=2000&Channel2=E&Speed2=4000") 'drive forward
     End Sub
 
     Private Sub btnForward_MouseUp(sender As Object, e As MouseEventArgs) Handles btnForward.MouseUp
-        wbOnScreen.Navigate("http://" & CurrentIP & "/cgi-bin/robot_code/robot.py?Channel1=AE&Speed1=0") 'stop robot
+        StopWheels()
     End Sub
 
     Private Sub btnBackward_MouseDown(sender As Object, e As MouseEventArgs) Handles btnBackward.MouseDown
-        wbOnScreen.Navigate("http://" & CurrentIP & "/cgi-bin/robot_code/robot.py?Channel1=A&Speed1=4000?Channel2=E&Speed2=2000") 'drive backward
+        wbOnScreen.Navigate("http://" & CurrentIP & "/cgi-bin/robot_code/robot.py?Channel1=A&Speed1=4000&Channel2=E&Speed2=2000") 'drive backward
     End Sub
 
     Private Sub btnBackward_MouseUp(sender As Object, e As MouseEventArgs) Handles btnBackward.MouseUp
-        wbOnScreen.Navigate("http://" & CurrentIP & "/cgi-bin/robot_code/robot.py?Channel1=AE&Speed1=0") 'stop robot
+        StopWheels()
     End Sub
 
     Private Sub btnRight_MouseDown(sender As Object, e As MouseEventArgs) Handles btnRight.MouseDown
-        wbOnScreen.Navigate("http://" & CurrentIP & "/cgi-bin/robot_code/robot.py?Channel1=A&Speed1=2000?Channel2=E&Speed2=2000") 'turn right
+        wbOnScreen.Navigate("http://" & CurrentIP & "/cgi-bin/robot_code/robot.py?Channel1=AE&Speed1=4000") 'turn right
     End Sub
 
     Private Sub btnLeft_MouseDown(sender As Object, e As MouseEventArgs) Handles btnLeft.MouseDown
-        wbOnScreen.Navigate("http://" & CurrentIP & "/cgi-bin/robot_code/robot.py?Channel1=A&Speed1=4000?Channel2=E&Speed2=4000") 'turn left
+        wbOnScreen.Navigate("http://" & CurrentIP & "/cgi-bin/robot_code/robot.py?Channel1=AE&Speed1=2000") 'turn left
     End Sub
 
     Private Sub btnLeft_MouseUp(sender As Object, e As MouseEventArgs) Handles btnLeft.MouseUp
-        wbOnScreen.Navigate("http://" & CurrentIP & "/cgi-bin/robot_code/robot.py?Channel1=AE&Speed1=0") 'stop robot
+        StopWheels()
     End Sub
 
     Private Sub btnRight_MouseUp(sender As Object, e As MouseEventArgs) Handles btnRight.MouseUp
-        wbOnScreen.Navigate("http://" & CurrentIP & "/cgi-bin/robot_code/robot.py?Channel1=AE&Speed1=0") 'stop robot
+        StopWheels()
+    End Sub
+
+    Private Sub frmRobotController_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+        CurrentIP = "192.168.1.150"
+    End Sub
+
+    Private Sub btnLights_Click(sender As Object, e As EventArgs) Handles btnLights.Click
+        If Lights = False Then
+            btnLights.Text = "Turn Lights Off"
+            Lights = True
+            wbOnScreen.Navigate("http://" & CurrentIP & "/cgi-bin/robot_code/robot.py?Lights=On") 'Turn Lights on or off
+        ElseIf Lights = True Then
+            btnLights.Text = "Turn Lights On"
+            Lights = False
+            wbOnScreen.Navigate("http://" & CurrentIP & "/cgi-bin/robot_code/robot.py?Lights=Off") 'Turn Lights on or off
+        End If
+    End Sub
+
+    Private Sub btnTurn_Click(sender As Object, e As EventArgs) Handles btnTurn.Click
+        Turn()
     End Sub
 End Class

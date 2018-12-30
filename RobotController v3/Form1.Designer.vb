@@ -50,6 +50,8 @@ Partial Class frmRobotController
         Me.lblPitch = New System.Windows.Forms.Label()
         Me.lblTopple = New System.Windows.Forms.Label()
         Me.gbGamepad = New System.Windows.Forms.GroupBox()
+        Me.lblWheelAngle = New System.Windows.Forms.Label()
+        Me.lblDirection = New System.Windows.Forms.Label()
         Me.wbGas = New System.Windows.Forms.WebBrowser()
         Me.tbSensors = New System.Windows.Forms.TextBox()
         Me.wbUptime = New System.Windows.Forms.WebBrowser()
@@ -109,7 +111,7 @@ Partial Class frmRobotController
         Me.tbWarnings.Name = "tbWarnings"
         Me.tbWarnings.ReadOnly = True
         Me.tbWarnings.ScrollBars = System.Windows.Forms.ScrollBars.Vertical
-        Me.tbWarnings.Size = New System.Drawing.Size(296, 91)
+        Me.tbWarnings.Size = New System.Drawing.Size(471, 91)
         Me.tbWarnings.TabIndex = 46
         '
         'btnTurn
@@ -265,7 +267,7 @@ Partial Class frmRobotController
         Me.gbBattery.Controls.Add(Me.lblVoltage)
         Me.gbBattery.Controls.Add(Me.pbBattery)
         Me.gbBattery.Controls.Add(Me.lblUptime)
-        Me.gbBattery.Location = New System.Drawing.Point(704, 556)
+        Me.gbBattery.Location = New System.Drawing.Point(879, 556)
         Me.gbBattery.Name = "gbBattery"
         Me.gbBattery.Size = New System.Drawing.Size(222, 145)
         Me.gbBattery.TabIndex = 44
@@ -357,6 +359,8 @@ Partial Class frmRobotController
         '
         'gbGamepad
         '
+        Me.gbGamepad.Controls.Add(Me.lblWheelAngle)
+        Me.gbGamepad.Controls.Add(Me.lblDirection)
         Me.gbGamepad.Controls.Add(Me.btnSetupGamepad)
         Me.gbGamepad.Controls.Add(Me.lblButtonAmount)
         Me.gbGamepad.Controls.Add(Me.btnGamepads)
@@ -372,6 +376,24 @@ Partial Class frmRobotController
         Me.gbGamepad.TabIndex = 31
         Me.gbGamepad.TabStop = False
         Me.gbGamepad.Text = "Gamepad"
+        '
+        'lblWheelAngle
+        '
+        Me.lblWheelAngle.AutoSize = True
+        Me.lblWheelAngle.Location = New System.Drawing.Point(105, 126)
+        Me.lblWheelAngle.Name = "lblWheelAngle"
+        Me.lblWheelAngle.Size = New System.Drawing.Size(68, 13)
+        Me.lblWheelAngle.TabIndex = 12
+        Me.lblWheelAngle.Text = "Wheel Angle"
+        '
+        'lblDirection
+        '
+        Me.lblDirection.AutoSize = True
+        Me.lblDirection.Location = New System.Drawing.Point(105, 113)
+        Me.lblDirection.Name = "lblDirection"
+        Me.lblDirection.Size = New System.Drawing.Size(49, 13)
+        Me.lblDirection.TabIndex = 11
+        Me.lblDirection.Text = "Direction"
         '
         'wbGas
         '
@@ -439,13 +461,12 @@ Partial Class frmRobotController
         '
         'wbOnScreen
         '
-        Me.wbOnScreen.Location = New System.Drawing.Point(51, 443)
+        Me.wbOnScreen.Location = New System.Drawing.Point(65, 39)
         Me.wbOnScreen.MinimumSize = New System.Drawing.Size(20, 20)
         Me.wbOnScreen.Name = "wbOnScreen"
         Me.wbOnScreen.ScrollBarsEnabled = False
-        Me.wbOnScreen.Size = New System.Drawing.Size(20, 20)
+        Me.wbOnScreen.Size = New System.Drawing.Size(479, 344)
         Me.wbOnScreen.TabIndex = 23
-        Me.wbOnScreen.Visible = False
         '
         'wbGyroAccelComp
         '
@@ -711,7 +732,7 @@ Partial Class frmRobotController
         '
         Me.btnSaveWarning.Location = New System.Drawing.Point(6, 116)
         Me.btnSaveWarning.Name = "btnSaveWarning"
-        Me.btnSaveWarning.Size = New System.Drawing.Size(296, 23)
+        Me.btnSaveWarning.Size = New System.Drawing.Size(471, 23)
         Me.btnSaveWarning.TabIndex = 47
         Me.btnSaveWarning.Text = "Save Warning Log"
         Me.btnSaveWarning.UseVisualStyleBackColor = True
@@ -722,7 +743,7 @@ Partial Class frmRobotController
         Me.gbWarnings.Controls.Add(Me.tbWarnings)
         Me.gbWarnings.Location = New System.Drawing.Point(390, 556)
         Me.gbWarnings.Name = "gbWarnings"
-        Me.gbWarnings.Size = New System.Drawing.Size(308, 145)
+        Me.gbWarnings.Size = New System.Drawing.Size(483, 145)
         Me.gbWarnings.TabIndex = 30
         Me.gbWarnings.TabStop = False
         Me.gbWarnings.Text = "Warnings"
@@ -731,7 +752,7 @@ Partial Class frmRobotController
         '
         Me.btnClose.Location = New System.Drawing.Point(12, 707)
         Me.btnClose.Name = "btnClose"
-        Me.btnClose.Size = New System.Drawing.Size(1317, 37)
+        Me.btnClose.Size = New System.Drawing.Size(1317, 36)
         Me.btnClose.TabIndex = 46
         Me.btnClose.Text = "Close"
         Me.btnClose.UseVisualStyleBackColor = True
@@ -854,4 +875,6 @@ Partial Class frmRobotController
     Friend WithEvents gbWarnings As GroupBox
     Friend WithEvents btnClose As Button
     Friend WithEvents tmrJoystick As Timer
+    Friend WithEvents lblDirection As Label
+    Friend WithEvents lblWheelAngle As Label
 End Class
