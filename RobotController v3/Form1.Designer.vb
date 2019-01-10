@@ -50,6 +50,7 @@ Partial Class frmRobotController
         Me.lblPitch = New System.Windows.Forms.Label()
         Me.lblTopple = New System.Windows.Forms.Label()
         Me.gbGamepad = New System.Windows.Forms.GroupBox()
+        Me.lblRaw = New System.Windows.Forms.Label()
         Me.lblWheelAngle = New System.Windows.Forms.Label()
         Me.lblDirection = New System.Windows.Forms.Label()
         Me.wbGas = New System.Windows.Forms.WebBrowser()
@@ -63,7 +64,7 @@ Partial Class frmRobotController
         Me.wbSignalLevel = New System.Windows.Forms.WebBrowser()
         Me.wbLinkQuality = New System.Windows.Forms.WebBrowser()
         Me.wbgamepad = New System.Windows.Forms.WebBrowser()
-        Me.wbCPUTemp = New System.Windows.Forms.WebBrowser()
+        Me.wbSensors = New System.Windows.Forms.WebBrowser()
         Me.btnBackward = New System.Windows.Forms.Button()
         Me.gbSensors = New System.Windows.Forms.GroupBox()
         Me.lblSensors = New System.Windows.Forms.Label()
@@ -89,6 +90,7 @@ Partial Class frmRobotController
         Me.gbWarnings = New System.Windows.Forms.GroupBox()
         Me.btnClose = New System.Windows.Forms.Button()
         Me.tmrJoystick = New System.Windows.Forms.Timer(Me.components)
+        Me.tmrSensors = New System.Windows.Forms.Timer(Me.components)
         Me.gbBattery.SuspendLayout()
         Me.gbTopple.SuspendLayout()
         CType(Me.tbTopple, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -246,7 +248,7 @@ Partial Class frmRobotController
         '
         Me.lblPercentage.AutoSize = True
         Me.lblPercentage.BackColor = System.Drawing.Color.Transparent
-        Me.lblPercentage.Location = New System.Drawing.Point(6, 44)
+        Me.lblPercentage.Location = New System.Drawing.Point(6, 42)
         Me.lblPercentage.Name = "lblPercentage"
         Me.lblPercentage.Size = New System.Drawing.Size(62, 13)
         Me.lblPercentage.TabIndex = 7
@@ -359,6 +361,7 @@ Partial Class frmRobotController
         '
         'gbGamepad
         '
+        Me.gbGamepad.Controls.Add(Me.lblRaw)
         Me.gbGamepad.Controls.Add(Me.lblWheelAngle)
         Me.gbGamepad.Controls.Add(Me.lblDirection)
         Me.gbGamepad.Controls.Add(Me.btnSetupGamepad)
@@ -376,6 +379,15 @@ Partial Class frmRobotController
         Me.gbGamepad.TabIndex = 31
         Me.gbGamepad.TabStop = False
         Me.gbGamepad.Text = "Gamepad"
+        '
+        'lblRaw
+        '
+        Me.lblRaw.AutoSize = True
+        Me.lblRaw.Location = New System.Drawing.Point(6, 129)
+        Me.lblRaw.Name = "lblRaw"
+        Me.lblRaw.Size = New System.Drawing.Size(39, 13)
+        Me.lblRaw.TabIndex = 13
+        Me.lblRaw.Text = "Label1"
         '
         'lblWheelAngle
         '
@@ -452,7 +464,7 @@ Partial Class frmRobotController
         Me.pnlCamera.Controls.Add(Me.wbTurnWheels)
         Me.pnlCamera.Controls.Add(Me.tbSensors)
         Me.pnlCamera.Controls.Add(Me.wbgamepad)
-        Me.pnlCamera.Controls.Add(Me.wbCPUTemp)
+        Me.pnlCamera.Controls.Add(Me.wbSensors)
         Me.pnlCamera.Controls.Add(Me.wbUptime)
         Me.pnlCamera.Location = New System.Drawing.Point(240, 12)
         Me.pnlCamera.Name = "pnlCamera"
@@ -505,14 +517,14 @@ Partial Class frmRobotController
         Me.wbgamepad.TabIndex = 35
         Me.wbgamepad.Visible = False
         '
-        'wbCPUTemp
+        'wbSensors
         '
-        Me.wbCPUTemp.Location = New System.Drawing.Point(103, 443)
-        Me.wbCPUTemp.MinimumSize = New System.Drawing.Size(20, 20)
-        Me.wbCPUTemp.Name = "wbCPUTemp"
-        Me.wbCPUTemp.Size = New System.Drawing.Size(20, 20)
-        Me.wbCPUTemp.TabIndex = 27
-        Me.wbCPUTemp.Visible = False
+        Me.wbSensors.Location = New System.Drawing.Point(103, 443)
+        Me.wbSensors.MinimumSize = New System.Drawing.Size(20, 20)
+        Me.wbSensors.Name = "wbSensors"
+        Me.wbSensors.Size = New System.Drawing.Size(20, 20)
+        Me.wbSensors.TabIndex = 27
+        Me.wbSensors.Visible = False
         '
         'btnBackward
         '
@@ -760,6 +772,9 @@ Partial Class frmRobotController
         'tmrJoystick
         '
         '
+        'tmrSensors
+        '
+        '
         'frmRobotController
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -852,7 +867,7 @@ Partial Class frmRobotController
     Friend WithEvents wbSignalLevel As WebBrowser
     Friend WithEvents wbLinkQuality As WebBrowser
     Friend WithEvents wbgamepad As WebBrowser
-    Friend WithEvents wbCPUTemp As WebBrowser
+    Friend WithEvents wbSensors As WebBrowser
     Friend WithEvents wbOnScreen As WebBrowser
     Friend WithEvents gbSystem As GroupBox
     Friend WithEvents btnSettings As Button
@@ -877,4 +892,6 @@ Partial Class frmRobotController
     Friend WithEvents tmrJoystick As Timer
     Friend WithEvents lblDirection As Label
     Friend WithEvents lblWheelAngle As Label
+    Friend WithEvents lblRaw As Label
+    Friend WithEvents tmrSensors As Timer
 End Class

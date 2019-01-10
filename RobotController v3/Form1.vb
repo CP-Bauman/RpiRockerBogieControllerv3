@@ -39,6 +39,11 @@ Public Class frmRobotController
     Public CompassZ As String = "0"
     Public Gas As String
     Public TempandHum As String
+    Public Sensors As String
+    Public Temperature As String
+    Public Humidity As String
+    Public Battery As String
+    Public Altimeter As String
     Public angle As Double
     Public angle2 As Double
     Public direction As Integer
@@ -107,6 +112,7 @@ Public Class frmRobotController
 
     Private Sub tmrJoystick_Tick(sender As Object, e As EventArgs) Handles tmrJoystick.Tick
         Dim WheelAngle As Integer
+        Dim AngleRaw As Integer
         ' Get the joystick information
         ' Program from https://social.msdn.microsoft.com/Forums/vstudio/en-US/af28b35b-d756-4d87-94c6-ced882ab20a5/reading-input-data-from-joystick-in-visual-basic?forum=vbgeneral Modified by Christiaan Bauman
         Call joyGetPosEx(0, myjoyEX)
@@ -159,6 +165,21 @@ Public Class frmRobotController
             WheelAngle = (direction / 90) * 45
             lblWheelAngle.Text = WheelAngle
 
+
+            If btnID = 64 And (LeftX <> 0 Or LeftY <> 0) Then
+                LeftY2 = LeftY
+                LeftX2 = LeftX
+                AngleRaw = WheelAngle * (15.5555) + 3100
+                wbgamepad.Navigate("http://" & CurrentIP & "/cgi-bin/robot_code/robot.py?Channel1=B&Speed1=" & AngleRaw)
+                lblRaw.Text = AngleRaw
+
+                '   wbgamepad.Navigate("http://" & CurrentIP & "/cgi-bin/robot_code/robot.py?Channel1=A&Speed1=2000&Channel2=E&Speed2=4000")
+
+
+
+            End If
+
+
         End With
 
     End Sub
@@ -196,7 +217,9 @@ Public Class frmRobotController
     End Sub
 
     Private Sub frmRobotController_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-        CurrentIP = "192.168.1.150"
+        CurrentIP = My.Settings.IP
+        tmrSensors.Interval = 1000
+        tmrSensors.Start()
     End Sub
 
     Private Sub btnLights_Click(sender As Object, e As EventArgs) Handles btnLights.Click
@@ -213,5 +236,24 @@ Public Class frmRobotController
 
     Private Sub btnTurn_Click(sender As Object, e As EventArgs) Handles btnTurn.Click
         Turn()
+    End Sub
+
+    Private Sub tbrCamY_Scroll(sender As Object, e As EventArgs) Handles tbrCamY.Scroll
+
+    End Sub
+
+    Private Sub tbrCamY_ValueChanged(sender As Object, e As EventArgs) Handles tbrCamY.ValueChanged
+
+    End Sub
+
+    Private Sub tmrSensors_Tick(sender As Object, e As EventArgs) Handles tmrSensors.Tick
+        Dim Sensors As String
+        Sensors = wbSensors.DocumentText
+        Dim SensorArray() As String = Split(Sensors, " ")
+        Temperature = SensorArray(0)
+        Humidity = SensorArray(1)
+        CPUTemp = SensorArray(2)
+        uptime = SensorArray(3)
+        wbSensors.Navigate("http://" & CurrentIP & "/cgi-bin/robot_code/robot.py?Sensor=True")
     End Sub
 End Class
