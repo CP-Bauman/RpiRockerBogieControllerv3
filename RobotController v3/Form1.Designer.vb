@@ -70,11 +70,11 @@ Partial Class frmRobotController
         Me.lblSensors = New System.Windows.Forms.Label()
         Me.btnSaveSensor = New System.Windows.Forms.Button()
         Me.gbSystem = New System.Windows.Forms.GroupBox()
-        Me.btnSettings = New System.Windows.Forms.Button()
         Me.btnShutdown = New System.Windows.Forms.Button()
         Me.btnReboot = New System.Windows.Forms.Button()
         Me.lblCPUTemp = New System.Windows.Forms.Label()
         Me.gbConnection = New System.Windows.Forms.GroupBox()
+        Me.lblPing = New System.Windows.Forms.Label()
         Me.lblSignalLevel = New System.Windows.Forms.Label()
         Me.lblLinkQuality = New System.Windows.Forms.Label()
         Me.rbWireless = New System.Windows.Forms.RadioButton()
@@ -283,7 +283,6 @@ Partial Class frmRobotController
         Me.pbBattery.Size = New System.Drawing.Size(210, 52)
         Me.pbBattery.Style = System.Windows.Forms.ProgressBarStyle.Continuous
         Me.pbBattery.TabIndex = 5
-        Me.pbBattery.Value = 80
         '
         'lblUptime
         '
@@ -473,12 +472,13 @@ Partial Class frmRobotController
         '
         'wbOnScreen
         '
-        Me.wbOnScreen.Location = New System.Drawing.Point(65, 39)
+        Me.wbOnScreen.Location = New System.Drawing.Point(51, 443)
         Me.wbOnScreen.MinimumSize = New System.Drawing.Size(20, 20)
         Me.wbOnScreen.Name = "wbOnScreen"
         Me.wbOnScreen.ScrollBarsEnabled = False
-        Me.wbOnScreen.Size = New System.Drawing.Size(479, 344)
+        Me.wbOnScreen.Size = New System.Drawing.Size(20, 20)
         Me.wbOnScreen.TabIndex = 23
+        Me.wbOnScreen.Visible = False
         '
         'wbGyroAccelComp
         '
@@ -549,9 +549,10 @@ Partial Class frmRobotController
         'lblSensors
         '
         Me.lblSensors.AutoSize = True
+        Me.lblSensors.Font = New System.Drawing.Font("Microsoft Sans Serif", 11.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.lblSensors.Location = New System.Drawing.Point(6, 16)
         Me.lblSensors.Name = "lblSensors"
-        Me.lblSensors.Size = New System.Drawing.Size(45, 13)
+        Me.lblSensors.Size = New System.Drawing.Size(64, 18)
         Me.lblSensors.TabIndex = 6
         Me.lblSensors.Text = "Sensors"
         '
@@ -566,7 +567,6 @@ Partial Class frmRobotController
         '
         'gbSystem
         '
-        Me.gbSystem.Controls.Add(Me.btnSettings)
         Me.gbSystem.Controls.Add(Me.btnShutdown)
         Me.gbSystem.Controls.Add(Me.btnReboot)
         Me.gbSystem.Controls.Add(Me.lblCPUTemp)
@@ -576,15 +576,6 @@ Partial Class frmRobotController
         Me.gbSystem.TabIndex = 26
         Me.gbSystem.TabStop = False
         Me.gbSystem.Text = "System"
-        '
-        'btnSettings
-        '
-        Me.btnSettings.Location = New System.Drawing.Point(9, 77)
-        Me.btnSettings.Name = "btnSettings"
-        Me.btnSettings.Size = New System.Drawing.Size(207, 23)
-        Me.btnSettings.TabIndex = 3
-        Me.btnSettings.Text = "Settings"
-        Me.btnSettings.UseVisualStyleBackColor = True
         '
         'btnShutdown
         '
@@ -615,6 +606,7 @@ Partial Class frmRobotController
         '
         'gbConnection
         '
+        Me.gbConnection.Controls.Add(Me.lblPing)
         Me.gbConnection.Controls.Add(Me.lblSignalLevel)
         Me.gbConnection.Controls.Add(Me.lblLinkQuality)
         Me.gbConnection.Controls.Add(Me.rbWireless)
@@ -625,6 +617,15 @@ Partial Class frmRobotController
         Me.gbConnection.TabIndex = 25
         Me.gbConnection.TabStop = False
         Me.gbConnection.Text = "Connection"
+        '
+        'lblPing
+        '
+        Me.lblPing.AutoSize = True
+        Me.lblPing.Location = New System.Drawing.Point(6, 88)
+        Me.lblPing.Name = "lblPing"
+        Me.lblPing.Size = New System.Drawing.Size(28, 13)
+        Me.lblPing.TabIndex = 8
+        Me.lblPing.Text = "Ping"
         '
         'lblSignalLevel
         '
@@ -701,7 +702,7 @@ Partial Class frmRobotController
         'tbrCamY
         '
         Me.tbrCamY.Location = New System.Drawing.Point(171, 19)
-        Me.tbrCamY.Maximum = 135
+        Me.tbrCamY.Maximum = 115
         Me.tbrCamY.Minimum = -90
         Me.tbrCamY.Name = "tbrCamY"
         Me.tbrCamY.Orientation = System.Windows.Forms.Orientation.Vertical
@@ -712,7 +713,7 @@ Partial Class frmRobotController
         '
         Me.tbrCamX.Location = New System.Drawing.Point(6, 19)
         Me.tbrCamX.Maximum = 135
-        Me.tbrCamX.Minimum = -135
+        Me.tbrCamX.Minimum = -130
         Me.tbrCamX.Name = "tbrCamX"
         Me.tbrCamX.Size = New System.Drawing.Size(159, 45)
         Me.tbrCamX.TabIndex = 4
@@ -774,6 +775,7 @@ Partial Class frmRobotController
         '
         'tmrSensors
         '
+        Me.tmrSensors.Interval = 1500
         '
         'frmRobotController
         '
@@ -870,15 +872,10 @@ Partial Class frmRobotController
     Friend WithEvents wbSensors As WebBrowser
     Friend WithEvents wbOnScreen As WebBrowser
     Friend WithEvents gbSystem As GroupBox
-    Friend WithEvents btnSettings As Button
     Friend WithEvents btnShutdown As Button
     Friend WithEvents btnReboot As Button
     Friend WithEvents lblCPUTemp As Label
     Friend WithEvents gbConnection As GroupBox
-    Friend WithEvents lblSignalLevel As Label
-    Friend WithEvents lblLinkQuality As Label
-    Friend WithEvents rbWireless As RadioButton
-    Friend WithEvents rbWired As RadioButton
     Friend WithEvents gbCamera As GroupBox
     Friend WithEvents btnLights As Button
     Friend WithEvents btn3DMap As Button
@@ -894,4 +891,9 @@ Partial Class frmRobotController
     Friend WithEvents lblWheelAngle As Label
     Friend WithEvents lblRaw As Label
     Friend WithEvents tmrSensors As Timer
+    Friend WithEvents lblSignalLevel As Label
+    Friend WithEvents lblLinkQuality As Label
+    Friend WithEvents rbWireless As RadioButton
+    Friend WithEvents rbWired As RadioButton
+    Friend WithEvents lblPing As Label
 End Class

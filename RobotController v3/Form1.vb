@@ -19,12 +19,12 @@ Public Class frmRobotController
     Public Dpad2 As Integer
     Public CurrentIP As String
     Public TurnWheels As Boolean = True
-    Public CPUTemp As Decimal
+    Public CPUTemp As String
     Public SignalLevel As Integer
     Public LinkQuality As Integer
     Public Lights As Boolean = True
     Public Camera As Boolean = True
-    Public UptimeMin As Integer
+    Public UptimeMin As Integer = 0
     Public UptimeHour As Integer = 0
     Public uptime As String
     Public GyroX As String = "0"
@@ -34,10 +34,16 @@ Public Class frmRobotController
     Public AccelerometerX As String = "0"
     Public AccelerometerY As String = "0"
     Public AccelerometerZ As String = "0"
+    Public accelerometer As String
     Public CompassX As String = "0"
     Public CompassY As String = "0"
     Public CompassZ As String = "0"
-    Public Gas As String
+    Public Compass As String
+    Public Pressure As String
+    Public MQ5 As String
+    Public MQ7 As String
+    Public BatteryPercent As Integer
+    Public BatteryVolt As Double
     Public TempandHum As String
     Public Sensors As String
     Public Temperature As String
@@ -47,6 +53,23 @@ Public Class frmRobotController
     Public angle As Double
     Public angle2 As Double
     Public direction As Integer
+    Public distance As String
+    Public Uptimesec As Integer = 0
+    Private WithEvents browser As ChromiumWebBrowser
+
+    Public Sub New()
+        'Program from https://thechriskent.com/2014/08/18/embedded-chromium-in-winforms/ modified by Christiaan Bauman
+        InitializeComponent()
+
+        Dim settings As New CefSettings()
+        CefSharp.Cef.Initialize(settings)
+
+        browser = New ChromiumWebBrowser() With {
+          .Dock = DockStyle.Fill
+         }
+        pnlCamera.Controls.Add(browser)
+
+    End Sub
     Sub StopWheels()
         wbOnScreen.Navigate("http://" & CurrentIP & "/cgi-bin/robot_code/robot.py?Channel1=AE&Speed1=0") 'stop robot
     End Sub
@@ -133,51 +156,75 @@ Public Class frmRobotController
             lblButtonType.Text = "Button ID:  " + btnID.ToString
             lblButtonAmount.Text = "Button amount:  " + btnAmount.ToString
             lblDpad.Text = "POV:  " + Dpad.ToString
-            If LeftY > 0 Then
-                direction = Math.Atan(LeftX / LeftY) * (180 / Math.PI)
-                lblDirection.Text = direction
-            End If
-            If (LeftY < 0) And (LeftX < 0) Then
-                direction = (Math.Atan(LeftX / LeftY) * (180 / Math.PI)) - 180
-                lblDirection.Text = direction
-            End If
-            If (LeftY < 0) And (LeftX > 0) Then
-                direction = (Math.Atan(LeftX / LeftY) * (180 / Math.PI)) + 180
-                lblDirection.Text = direction
-            End If
-            If (LeftY = 0) And (LeftX < 0) Then
-                direction = -90
-                lblDirection.Text = direction
-            End If
-            If (LeftY = 0) And (LeftX > 0) Then
-                direction = 90
-                lblDirection.Text = direction
-            End If
-            If (LeftY < 0) And (LeftX = 0) Then
-                direction = 180
-                lblDirection.Text = direction
-            End If
-            If (LeftY > 0) And (LeftX = 0) Then
-                direction = 0
-                lblDirection.Text = direction
-            End If
-
-            WheelAngle = (direction / 90) * 45
-            lblWheelAngle.Text = WheelAngle
 
 
-            If btnID = 64 And (LeftX <> 0 Or LeftY <> 0) Then
-                LeftY2 = LeftY
-                LeftX2 = LeftX
-                AngleRaw = WheelAngle * (15.5555) + 3100
-                wbgamepad.Navigate("http://" & CurrentIP & "/cgi-bin/robot_code/robot.py?Channel1=B&Speed1=" & AngleRaw)
-                lblRaw.Text = AngleRaw
-
-                '   wbgamepad.Navigate("http://" & CurrentIP & "/cgi-bin/robot_code/robot.py?Channel1=A&Speed1=2000&Channel2=E&Speed2=4000")
-
-
-
+            If Dpad = 0 And tbrCamY.Value < 115 Then
+                tbrCamY.Value = tbrCamY.Value + 1
             End If
+            If Dpad = 180 And tbrCamY.Value > -90 Then
+                tbrCamY.Value = tbrCamY.Value - 1
+            End If
+            If Dpad = 90 And tbrCamX.Value < 135 Then
+                tbrCamX.Value = tbrCamX.Value + 1
+            End If
+            If Dpad = 270 And tbrCamX.Value > -130 Then
+                tbrCamX.Value = tbrCamX.Value - 1
+            End If
+            If Dpad <> Dpad2 Then
+                Dpad2 = Dpad
+                If Dpad = 655 Then
+                    Dim YAngle As Integer
+                    Dim YRaw As Integer
+                    YAngle = tbrCamY.Value
+                    YRaw = -YAngle * (420 / 27) + 3000
+                    Dim XAngle As Integer
+                    Dim XRaw As Integer
+                    XAngle = tbrCamX.Value
+                    XRaw = -XAngle * (420 / 27) + 3000
+                    wbOnScreen.Navigate("http://" & CurrentIP & "/cgi-bin/robot_code/robot.py?Channel1=D&Speed1=" & XRaw & "&Channel2=H&Speed2=" & YRaw)
+                End If
+            End If
+            If btnID <> btnID2 Then
+                btnID2 = btnID
+                If btnID = 64 Then
+                    btnLights.PerformClick()
+                End If
+                If btnID = 16 Then
+                    btnCam.PerformClick()
+                End If
+            End If
+
+            'If LeftY > 0 Then
+            '    direction = Math.Atan(LeftX / LeftY) * (180 / Math.PI)
+            '    lblDirection.Text = direction
+            'End If
+            'If (LeftY < 0) And (LeftX < 0) Then
+            '    direction = (Math.Atan(LeftX / LeftY) * (180 / Math.PI)) - 180
+            '    lblDirection.Text = direction
+            'End If
+            'If (LeftY < 0) And (LeftX > 0) Then
+            '    direction = (Math.Atan(LeftX / LeftY) * (180 / Math.PI)) + 180
+            '    lblDirection.Text = direction
+            'End If
+            'If (LeftY = 0) And (LeftX < 0) Then
+            '    direction = -90
+            '    lblDirection.Text = direction
+            'End If
+            'If (LeftY = 0) And (LeftX > 0) Then
+            '    direction = 90
+            '    lblDirection.Text = direction
+            'End If
+            'If (LeftY < 0) And (LeftX = 0) Then
+            '    direction = 180
+            '    lblDirection.Text = direction
+            'End If
+            'If (LeftY > 0) And (LeftX = 0) Then
+            '    direction = 0
+            '    lblDirection.Text = direction
+            'End If
+
+            'WheelAngle = (direction / 90) * 45
+            'lblWheelAngle.Text = WheelAngle
 
 
         End With
@@ -220,6 +267,8 @@ Public Class frmRobotController
         CurrentIP = My.Settings.IP
         tmrSensors.Interval = 1000
         tmrSensors.Start()
+        wbSensors.Navigate("http://" & CurrentIP & "/cgi-bin/robot_code/robot.py?Sensor=True")
+        browser.Load("http://" & CurrentIP & "/html") 'load camera 1 into webbrowser
     End Sub
 
     Private Sub btnLights_Click(sender As Object, e As EventArgs) Handles btnLights.Click
@@ -238,22 +287,100 @@ Public Class frmRobotController
         Turn()
     End Sub
 
+    Private Sub tmrSensors_Tick(sender As Object, e As EventArgs) Handles tmrSensors.Tick
+        Try
+            Sensors = wbSensors.DocumentText
+            Temperature = Mid(Sensors, InStr(Sensors, "TempStart") + 9, InStr(Sensors, "TempEnd") - (InStr(Sensors, "TempStart") + 9))
+            Humidity = Mid(Sensors, InStr(Sensors, "HumStart") + 8, InStr(Sensors, "HumEnd") - (InStr(Sensors, "HumStart") + 8))
+            CPUTemp = Mid(Sensors, InStr(Sensors, "CPUStart") + 8, InStr(Sensors, "CPUEnd") - (InStr(Sensors, "CPUStart") + 8))
+            uptime = Mid(Sensors, InStr(Sensors, "UpStart") + 7, InStr(Sensors, "UpEnd") - (InStr(Sensors, "UpStart") + 7))
+            distance = Mid(Sensors, InStr(Sensors, "DistStart") + 9, InStr(Sensors, "DistEnd") - (InStr(Sensors, "DistStart") + 9))
+            Gyro = Mid(Sensors, InStr(Sensors, "GyroStart") + 9, InStr(Sensors, "GyroEnd") - (InStr(Sensors, "GyroStart") + 9))
+            accelerometer = Mid(Sensors, InStr(Sensors, "AccelStart") + 10, InStr(Sensors, "AccelEnd") - (InStr(Sensors, "AccelStart") + 10))
+            Compass = Mid(Sensors, InStr(Sensors, "MagStart") + 8, InStr(Sensors, "MagEnd") - (InStr(Sensors, "MagStart") + 8))
+            Pressure = Mid(Sensors, InStr(Sensors, "PresStart") + 9, InStr(Sensors, "PresEnd") - (InStr(Sensors, "PresStart") + 9))
+            MQ5 = Mid(Sensors, InStr(Sensors, "MQ5Start") + 8, InStr(Sensors, "MQ5End") - (InStr(Sensors, "MQ5Start") + 8))
+            MQ7 = Mid(Sensors, InStr(Sensors, "MQ7Start") + 8, InStr(Sensors, "MQ7End") - (InStr(Sensors, "MQ7Start") + 8))
+            BatteryVolt = Mid(Sensors, InStr(Sensors, "BatStart") + 8, InStr(Sensors, "BatEnd") - (InStr(Sensors, "BatStart") + 8))
+        Catch SensorError As ArgumentException
+        Finally
+            Dim ping As New Net.NetworkInformation.Ping
+            Dim ms = ping.Send(CurrentIP).RoundtripTime()
+            lblPing.Text = "Ping:  " & ms & " ms"
+            UptimeHour = Math.Truncate(uptime / 3600)
+            UptimeMin = Math.Truncate((uptime Mod 3600) / 60)
+            Uptimesec = Math.Truncate(uptime Mod 60)
+            wbSensors.Navigate("http://" & CurrentIP & "/cgi-bin/robot_code/robot.py?Sensor=True")
+            lblSensors.Text = "Temperature:  " + Temperature + "°C" + vbNewLine + "Humidity:  " + Humidity + "%" + vbNewLine + "Distance:  " + distance + "cm" + vbNewLine + "Metahne:  " + MQ5 + " ppm " + vbNewLine + "Carbon Monoxide:  " + MQ7 + " ppm " + vbNewLine
+            lblCPUTemp.Text = "CPU Temperature:  " + CPUTemp
+            lblUptime.Text = "Uptime:  " + Str(UptimeHour) + " Hours " + Str(UptimeMin) + " Minutes " + Str(Uptimesec) + " Seconds "
+            lblVoltage.Text = "Battery Voltage:  " + Str(BatteryVolt) + " V"
+            lblPercentage.Text = "Battery Percentage:  " + Str(pbBattery.Value) + " %"
+            If BatteryVolt > 13 Then
+                pbBattery.Value = 90 + ((BatteryVolt - 13) * 5)
+            ElseIf BatteryVolt > 12 And BatteryVolt <= 13 Then
+                pbBattery.Value = 20 + ((BatteryVolt - 11) * 70)
+            ElseIf BatteryVolt > 10 And BatteryVolt <= 12 Then
+                pbBattery.Value = ((BatteryVolt - 10) * 10)
+            Else pbBattery.Value = 0
+            End If
+        End Try
+    End Sub
+    Private Sub tbrCamX_MouseUp(sender As Object, e As MouseEventArgs) Handles tbrCamX.MouseUp
+        Dim XAngle As Integer
+        Dim XRaw As Integer
+        XAngle = tbrCamX.Value
+        XRaw = -XAngle * (420 / 27) + 3000
+        wbOnScreen.Navigate("http://" & CurrentIP & "/cgi-bin/robot_code/robot.py?Channel1=D&Speed1=" & XRaw)
+    End Sub
+
+    Private Sub gbSensors_Enter(sender As Object, e As EventArgs) Handles gbSensors.Enter
+
+    End Sub
+
     Private Sub tbrCamY_Scroll(sender As Object, e As EventArgs) Handles tbrCamY.Scroll
 
     End Sub
 
-    Private Sub tbrCamY_ValueChanged(sender As Object, e As EventArgs) Handles tbrCamY.ValueChanged
-
+    Private Sub tbrCamY_MouseUp(sender As Object, e As MouseEventArgs) Handles tbrCamY.MouseUp
+        Dim YAngle As Integer
+        Dim YRaw As Integer
+        YAngle = tbrCamY.Value
+        YRaw = -YAngle * (420 / 27) + 3000
+        wbOnScreen.Navigate("http://" & CurrentIP & "/cgi-bin/robot_code/robot.py?Channel1=H&Speed1=" & YRaw)
     End Sub
 
-    Private Sub tmrSensors_Tick(sender As Object, e As EventArgs) Handles tmrSensors.Tick
-        Dim Sensors As String
-        Sensors = wbSensors.DocumentText
-        Dim SensorArray() As String = Split(Sensors, " ")
-        Temperature = SensorArray(0)
-        Humidity = SensorArray(1)
-        CPUTemp = SensorArray(2)
-        uptime = SensorArray(3)
-        wbSensors.Navigate("http://" & CurrentIP & "/cgi-bin/robot_code/robot.py?Sensor=True")
+    Private Sub btnReboot_Click(sender As Object, e As EventArgs) Handles btnReboot.Click
+        wbOnScreen.Navigate("http://" & CurrentIP & "/cgi-bin/robot_code/robot.py?Power=reboot")
+    End Sub
+
+    Private Sub btnShutdown_Click(sender As Object, e As EventArgs) Handles btnShutdown.Click
+        wbOnScreen.Navigate("http://" & CurrentIP & "/cgi-bin/robot_code/robot.py?Power=off")
+    End Sub
+
+    Private Sub cbAngle_CheckedChanged(sender As Object, e As EventArgs) Handles cbAngle.CheckedChanged
+        If cbAngle.Checked = False Then
+            tbTopple.Enabled = False
+            wbOnScreen.Navigate("http:/" & CurrentIP & "/cgi-bin/robot_code/robot.py?Topple=False")
+        Else
+            tbTopple.Enabled = True
+            wbOnScreen.Navigate("http://" & CurrentIP & "/cgi-bin/robot_code/robot.py?Topple=" + Str(tbTopple.Value))
+        End If
+    End Sub
+
+    Private Sub tbTopple_MouseUp(sender As Object, e As MouseEventArgs) Handles tbTopple.MouseUp
+        wbOnScreen.Navigate("http://" & CurrentIP & "/cgi-bin/robot_code/robot.py?Topple=" + Str(tbTopple.Value))
+    End Sub
+
+    Private Sub btnCam_Click(sender As Object, e As EventArgs) Handles btnCam.Click
+        If Camera = False Then
+            browser.Load("http://" & CurrentIP & "/html/")
+            btnCam.Text = "Camera 1"
+            Camera = True
+        ElseIf Camera = True Then
+            browser.Load("http://" & CurrentIP & ":3400")
+            btnCam.Text = "Camera 2"
+            Camera = False
+        End If
     End Sub
 End Class

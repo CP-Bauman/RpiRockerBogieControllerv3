@@ -28,7 +28,7 @@
     Private Sub frmInitiate_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         btnInitiate.Enabled = False
         tbIP.Text = My.Settings.IP
-        lblConnectionStatus.Text = "Connection Status:  disconnected"
+        lblConnectionStatus.Text = "Connection Status:  Disconnected"
         If (Len(tbIP.Text) >= 8) And tbIP.Text.EndsWith(".") = False Then
             If My.Computer.Network.Ping(tbIP.Text) Then
                 My.Settings.IP = tbIP.Text
@@ -55,7 +55,7 @@
             btnInitiate.Enabled = True
 
         Else
-            lblConnectionStatus.Text = "Connection Status:  disconnected"
+            lblConnectionStatus.Text = "Connection Status:  Disconnected"
             MsgBox("Cannot connect to this IP")
             btnConnect.Enabled = True
             tbIP.Enabled = True
@@ -75,7 +75,8 @@
     End Sub
 
     Private Sub btnInitiate_Click(sender As Object, e As EventArgs) Handles btnInitiate.Click
-        wbConnected.Navigate("http://" & tbIP.Text & "/cgi-bin/robot_code/robot.py?Connected=Initiate")
+        wbConnected.Navigate("http://" & tbIP.Text & "/cgi-bin/robot_code/robot.py?Connected=int")
+        wait(1000)
         frmRobotController.Show()
         Me.Close()
     End Sub
