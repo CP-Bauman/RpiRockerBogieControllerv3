@@ -307,15 +307,29 @@ Public Class frmRobotController
             Dim ping As New Net.NetworkInformation.Ping
             Dim ms = ping.Send(CurrentIP).RoundtripTime()
             lblPing.Text = "Ping:  " & ms & " ms"
+
             UptimeHour = Math.Truncate(uptime / 3600)
             UptimeMin = Math.Truncate((uptime Mod 3600) / 60)
             Uptimesec = Math.Truncate(uptime Mod 60)
-            wbSensors.Navigate("http://" & CurrentIP & "/cgi-bin/robot_code/robot.py?Sensor=True")
-            lblSensors.Text = "Temperature:  " + Temperature + "°C" + vbNewLine + "Humidity:  " + Humidity + "%" + vbNewLine + "Distance:  " + distance + "cm" + vbNewLine + "Metahne:  " + MQ5 + " ppm " + vbNewLine + "Carbon Monoxide:  " + MQ7 + " ppm " + vbNewLine
+
+            GyroX = Split(Gyro, " ")(0)
+            GyroY = Split(Gyro, " ")(1)
+            GyroZ = Split(Gyro, " ")(2)
+
+            AccelerometerX = Split(accelerometer, " ")(0)
+            AccelerometerY = Split(accelerometer, " ")(1)
+            AccelerometerZ = Split(accelerometer, " ")(2)
+
+            CompassX = Split(Compass, " ")(0)
+            CompassY = Split(Compass, " ")(1)
+            CompassZ = Split(Compass, " ")(2)
+
+            lblSensors.Text = "Temperature:  " + Temperature + "°C" + vbNewLine + "Humidity:  " + Humidity + "%" + vbNewLine + "Distance:  " + distance + "cm" + vbNewLine + "Metahne:  " + MQ5 + " ppm " + vbNewLine + "Carbon Monoxide:  " + MQ7 + " ppm " + vbNewLine + "Gyro: " + GyroX
             lblCPUTemp.Text = "CPU Temperature:  " + CPUTemp
             lblUptime.Text = "Uptime:  " + Str(UptimeHour) + " Hours " + Str(UptimeMin) + " Minutes " + Str(Uptimesec) + " Seconds "
             lblVoltage.Text = "Battery Voltage:  " + Str(BatteryVolt) + " V"
             lblPercentage.Text = "Battery Percentage:  " + Str(pbBattery.Value) + " %"
+
             If BatteryVolt > 13 Then
                 pbBattery.Value = 90 + ((BatteryVolt - 13) * 5)
             ElseIf BatteryVolt > 12 And BatteryVolt <= 13 Then
@@ -324,6 +338,7 @@ Public Class frmRobotController
                 pbBattery.Value = ((BatteryVolt - 10) * 10)
             Else pbBattery.Value = 0
             End If
+            wbSensors.Navigate("http://" & CurrentIP & "/cgi-bin/robot_code/robot.py?Sensor=True")
         End Try
     End Sub
     Private Sub tbrCamX_MouseUp(sender As Object, e As MouseEventArgs) Handles tbrCamX.MouseUp
