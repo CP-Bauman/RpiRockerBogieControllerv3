@@ -712,8 +712,8 @@ Partial Class frmRobotController
         'tbrCamX
         '
         Me.tbrCamX.Location = New System.Drawing.Point(6, 19)
-        Me.tbrCamX.Maximum = 135
-        Me.tbrCamX.Minimum = -130
+        Me.tbrCamX.Maximum = 90
+        Me.tbrCamX.Minimum = -90
         Me.tbrCamX.Name = "tbrCamX"
         Me.tbrCamX.Size = New System.Drawing.Size(159, 45)
         Me.tbrCamX.TabIndex = 4

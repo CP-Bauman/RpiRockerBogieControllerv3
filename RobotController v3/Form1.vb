@@ -27,18 +27,18 @@ Public Class frmRobotController
     Public UptimeMin As Integer = 0
     Public UptimeHour As Integer = 0
     Public uptime As String
-    Public GyroX As String = "0"
-    Public GyroY As String = "0"
-    Public GyroZ As String = "0"
-    Public Gyro As String
-    Public AccelerometerX As String = "0"
-    Public AccelerometerY As String = "0"
-    Public AccelerometerZ As String = "0"
-    Public accelerometer As String
-    Public CompassX As String = "0"
-    Public CompassY As String = "0"
-    Public CompassZ As String = "0"
-    Public Compass As String
+    Public GyroX As Double = 0
+    Public GyroY As Double = 0
+    Public GyroZ As Double = 0
+    Public Gyro As String = "0 0 0"
+    Public AccelerometerX As Double = 0
+    Public AccelerometerY As Double = 0
+    Public AccelerometerZ As Double = 0
+    Public accelerometer As String = "0 0 0"
+    Public CompassX As Double = 0
+    Public CompassY As Double = 0
+    Public CompassZ As Double = 0
+    Public Compass As String = "0 0 0"
     Public Pressure As String
     Public MQ5 As String
     Public MQ7 As String
@@ -164,10 +164,10 @@ Public Class frmRobotController
             If Dpad = 180 And tbrCamY.Value > -90 Then
                 tbrCamY.Value = tbrCamY.Value - 1
             End If
-            If Dpad = 90 And tbrCamX.Value < 135 Then
+            If Dpad = 90 And tbrCamX.Value < 90 Then
                 tbrCamX.Value = tbrCamX.Value + 1
             End If
-            If Dpad = 270 And tbrCamX.Value > -130 Then
+            If Dpad = 270 And tbrCamX.Value > -90 Then
                 tbrCamX.Value = tbrCamX.Value - 1
             End If
             If Dpad <> Dpad2 Then
@@ -192,39 +192,42 @@ Public Class frmRobotController
                 If btnID = 16 Then
                     btnCam.PerformClick()
                 End If
+                If btnID = 1024 Then
+                    Turn()
+                End If
             End If
 
-            'If LeftY > 0 Then
-            '    direction = Math.Atan(LeftX / LeftY) * (180 / Math.PI)
-            '    lblDirection.Text = direction
-            'End If
-            'If (LeftY < 0) And (LeftX < 0) Then
-            '    direction = (Math.Atan(LeftX / LeftY) * (180 / Math.PI)) - 180
-            '    lblDirection.Text = direction
-            'End If
-            'If (LeftY < 0) And (LeftX > 0) Then
-            '    direction = (Math.Atan(LeftX / LeftY) * (180 / Math.PI)) + 180
-            '    lblDirection.Text = direction
-            'End If
-            'If (LeftY = 0) And (LeftX < 0) Then
-            '    direction = -90
-            '    lblDirection.Text = direction
-            'End If
-            'If (LeftY = 0) And (LeftX > 0) Then
-            '    direction = 90
-            '    lblDirection.Text = direction
-            'End If
-            'If (LeftY < 0) And (LeftX = 0) Then
-            '    direction = 180
-            '    lblDirection.Text = direction
-            'End If
-            'If (LeftY > 0) And (LeftX = 0) Then
-            '    direction = 0
-            '    lblDirection.Text = direction
-            'End If
+            If LeftY > 0 Then
+                direction = Math.Atan(LeftX / LeftY) * (180 / Math.PI)
+                lblDirection.Text = direction
+            End If
+            If (LeftY < 0) And (LeftX < 0) Then
+                direction = (Math.Atan(LeftX / LeftY) * (180 / Math.PI)) - 180
+                lblDirection.Text = direction
+            End If
+            If (LeftY < 0) And (LeftX > 0) Then
+                direction = (Math.Atan(LeftX / LeftY) * (180 / Math.PI)) + 180
+                lblDirection.Text = direction
+            End If
+            If (LeftY = 0) And (LeftX < 0) Then
+                direction = -90
+                lblDirection.Text = direction
+            End If
+            If (LeftY = 0) And (LeftX > 0) Then
+                direction = 90
+                lblDirection.Text = direction
+            End If
+            If (LeftY < 0) And (LeftX = 0) Then
+                direction = 180
+                lblDirection.Text = direction
+            End If
+            If (LeftY > 0) And (LeftX = 0) Then
+                direction = 0
+                lblDirection.Text = direction
+            End If
 
-            'WheelAngle = (direction / 90) * 45
-            'lblWheelAngle.Text = WheelAngle
+            WheelAngle = (direction / 90) * 45
+            lblWheelAngle.Text = WheelAngle
 
 
         End With
@@ -324,7 +327,7 @@ Public Class frmRobotController
             CompassY = Split(Compass, " ")(1)
             CompassZ = Split(Compass, " ")(2)
 
-            lblSensors.Text = "Temperature:  " + Temperature + "°C" + vbNewLine + "Humidity:  " + Humidity + "%" + vbNewLine + "Distance:  " + distance + "cm" + vbNewLine + "Metahne:  " + MQ5 + " ppm " + vbNewLine + "Carbon Monoxide:  " + MQ7 + " ppm " + vbNewLine + "Gyro: " + GyroX
+            lblSensors.Text = "Temperature:  " + Temperature + "°C" + vbNewLine + "Humidity:  " + Humidity + "%" + vbNewLine + "Distance:  " + distance + "cm" + vbNewLine + "Metahne:  " + MQ5 + " ppm " + vbNewLine + "Carbon Monoxide:  " + MQ7 + " ppm " + vbNewLine + "Gyro: X: " + (Math.Round(GyroX, 2)).ToString + " Y: " + (Math.Round(GyroY, 2)).ToString + " Z: " + (Math.Round(GyroZ, 2)).ToString + vbNewLine + "Accelerometer:  X: " + (Math.Round(AccelerometerX, 2)).ToString + " Y: " + (Math.Round(AccelerometerY, 2)).ToString + " Z: " + (Math.Round(AccelerometerZ, 2)).ToString
             lblCPUTemp.Text = "CPU Temperature:  " + CPUTemp
             lblUptime.Text = "Uptime:  " + Str(UptimeHour) + " Hours " + Str(UptimeMin) + " Minutes " + Str(Uptimesec) + " Seconds "
             lblVoltage.Text = "Battery Voltage:  " + Str(BatteryVolt) + " V"
@@ -333,7 +336,7 @@ Public Class frmRobotController
             If BatteryVolt > 13 Then
                 pbBattery.Value = 90 + ((BatteryVolt - 13) * 5)
             ElseIf BatteryVolt > 12 And BatteryVolt <= 13 Then
-                pbBattery.Value = 20 + ((BatteryVolt - 11) * 70)
+                pbBattery.Value = 20 + ((BatteryVolt - 12) * 70)
             ElseIf BatteryVolt > 10 And BatteryVolt <= 12 Then
                 pbBattery.Value = ((BatteryVolt - 10) * 10)
             Else pbBattery.Value = 0
@@ -370,7 +373,7 @@ Public Class frmRobotController
     End Sub
 
     Private Sub btnShutdown_Click(sender As Object, e As EventArgs) Handles btnShutdown.Click
-        wbOnScreen.Navigate("http://" & CurrentIP & "/cgi-bin/robot_code/robot.py?Power=off")
+        wbOnScreen.Navigate("http://" & CurrentIP & "/cgi-bin/robot_code/robot.py?Power=off&Lights=On")
     End Sub
 
     Private Sub cbAngle_CheckedChanged(sender As Object, e As EventArgs) Handles cbAngle.CheckedChanged

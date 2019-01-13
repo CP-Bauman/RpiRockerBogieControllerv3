@@ -26,6 +26,7 @@
     End Sub
 
     Private Sub frmInitiate_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+        Process.Start("C:\Users\Tiaan-LT\Desktop\Start hosted network.bat")
         btnInitiate.Enabled = False
         tbIP.Text = My.Settings.IP
         lblConnectionStatus.Text = "Connection Status:  Disconnected"
